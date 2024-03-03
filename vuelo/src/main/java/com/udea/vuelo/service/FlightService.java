@@ -21,13 +21,14 @@ public class FlightService {
 	public List<List<Flight>> searchFlights(LocalDate startDate, LocalDate endDate){
 		try {
 			ObjectMapper objectMapper = new ObjectMapper();
-			InputStream inputStream = getClass().getClassLoader().getResourceAsStream("flights.json");
+			InputStream inputStream = getClass().getClassLoader().getResourceAsStream("flight.json");
 			
 			if(inputStream != null) {
 				Flight[] flights = objectMapper.readValue(inputStream, Flight[].class);
-				return Arrays.stream(flights)
-						.filter(flight -> isDatateInRange(flight.getDepartureDate(),starDate,endDate))
-						.collect(Collectors.toList());
+				return 	Arrays.asList(
+						Arrays.stream(flights)
+						.filter(flight -> isDatateInRange(flight.getDepartureDate(),startDate,endDate))
+						.collect(Collectors.toList()));
 			}else {
 				return null;
 			}
@@ -35,6 +36,9 @@ public class FlightService {
 			throw new RuntimeException("Error leyendo el archivo Json",e);
 		}
 	}
-	private boolean isDatateInRange() {
+	private boolean isDatateInRange(LocalDate dateToCheck, LocalDate startDate, LocalDate endDate) {
+	//verifica si la fecha esta en el rango correcto
+	return !dateToCheck.isBefore(startDate) && !dateToCheck.isAfter(endDate);
+		
 	}
 }
